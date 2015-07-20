@@ -237,7 +237,12 @@ namespace libtorrent
 
 	void torrent_handle::set_max_connections(int max_connections) const
 	{
-		TORRENT_ASSERT_PRECOND(max_connections >= 2 || max_connections == -1);
+		if (max_connections == 1 || max_connections < -1) {
+#ifndef TORRENT_DISABLE_LOGGING
+			debug_log("Invalid input to set_max_connections: %d", max_connections);
+#endif
+			return;
+		}
 		TORRENT_ASYNC_CALL2(set_max_connections, max_connections, true);
 	}
 
